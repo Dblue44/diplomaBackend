@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "diplomabackend"
+version = "0.1.0"
+description = ""
+authors = ["Dmitrii <stakheev12@mail.ru>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.9,<3.12"
+path = "^16.9.0"
+fastapi = "^0.105.0"
+uvicorn = "^0.25.0"
+
+requests = "^2.27.1"
+python-dotenv = "^1.0.0"
+
+loguru = "^0.7.2"
+aiohttp = "^3.8.6"
+asyncio = "^3.4.3"
+
+pydantic = "^2.5.1"
+pydantic-settings = "^2.1.0"
+gunicorn = "^21.2.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
