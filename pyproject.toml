@@ -21,6 +21,7 @@ asyncio = "^3.4.3"
 pydantic = "^2.5.1"
 pydantic-settings = "^2.1.0"
 gunicorn = "^21.2.0"
+strawberry-graphql = "^0.217.0"
 
 [build-system]
 requires = ["poetry-core"]

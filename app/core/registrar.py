@@ -1,10 +1,14 @@
+import strawberry
 from fastapi import FastAPI
-from fastapi_pagination import add_pagination
+
 from .conf import settings
 from app.api.routers import v1
 from app.utils.health_check import ensure_unique_route_names
 from app.utils.openapi import simplify_operation_ids
-
+from strawberry.fastapi import GraphQLRouter
+from strawberry.schema.config import StrawberryConfig
+from app.services.graphql.query import Query
+from app.services.graphql.mutation import Mutation
 
 def register_app():
     # FastAPI
@@ -15,7 +19,6 @@ def register_app():
         docs_url=settings.DOCS_URL,
         redoc_url=settings.REDOCS_URL,
         openapi_url=settings.OPENAPI_URL,
-        # lifespan=register_init, - REDIS
     )
 
     # Middlewares
@@ -23,9 +26,6 @@ def register_app():
 
     # Routers
     register_router(app)
-
-    # Pagination
-    register_page(app)
 
     # Exceptions
     # register_exception(app)
@@ -40,16 +40,7 @@ def register_middleware(app: FastAPI):
     :param app:
     :return:
     """
-    # Gzip: Always at the top
-    if settings.MIDDLEWARE_GZIP:
-        from fastapi.middleware.gzip import GZipMiddleware
 
-        app.add_middleware(GZipMiddleware)
-    # Access log
-    if settings.MIDDLEWARE_ACCESS:
-        from app.middlewares.access_middleware import AccessMiddleware
-
-        app.add_middleware(AccessMiddleware)
     # CORS: Always at the end
     if settings.MIDDLEWARE_CORS:
         from fastapi.middleware.cors import CORSMiddleware
@@ -70,6 +61,10 @@ def register_router(app: FastAPI):
     :param app: FastAPI
     :return:
     """
+    # GraphQL
+    schema = strawberry.Schema(query=Query, mutation=Mutation, config=StrawberryConfig(auto_camel_case=True),)
+    graphql_app = GraphQLRouter(schema)
+    app.include_router(graphql_app, prefix='/graphql')
 
     # API
     app.include_router(v1)
@@ -77,13 +72,3 @@ def register_router(app: FastAPI):
     # Extra
     ensure_unique_route_names(app)
     simplify_operation_ids(app)
-
-
-def register_page(app: FastAPI):
-    """
-    Paging query
-
-    :param app:
-    :return:
-    """
-    add_pagination(app)
