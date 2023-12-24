@@ -62,7 +62,7 @@ def register_router(app: FastAPI):
     :return:
     """
     # GraphQL
-    schema = strawberry.Schema(query=Query, mutation=Mutation, config=StrawberryConfig(auto_camel_case=True),)
+    schema = strawberry.Schema(query=Query, config=StrawberryConfig(auto_camel_case=True),)
     graphql_app = GraphQLRouter(schema)
     app.include_router(graphql_app, prefix='/graphql')
 

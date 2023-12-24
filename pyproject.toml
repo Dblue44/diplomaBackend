@@ -22,6 +22,7 @@ pydantic = "^2.5.1"
 pydantic-settings = "^2.1.0"
 gunicorn = "^21.2.0"
 strawberry-graphql = "^0.217.0"
+graphql-core = "^3.2.3"
 
 [build-system]
 requires = ["poetry-core"]

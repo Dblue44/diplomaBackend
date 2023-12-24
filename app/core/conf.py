@@ -6,8 +6,6 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    # Env Config
-    ENVIRONMENT: Literal['dev', 'pro']
 
     # Uvicorn
     UVICORN_HOST: str = '127.0.0.1'
