@@ -10,6 +10,7 @@ from strawberry.schema.config import StrawberryConfig
 from app.services.graphql.query import Query
 from app.services.graphql.mutation import Mutation
 
+
 def register_app():
     # FastAPI
     app = FastAPI(
@@ -44,7 +45,6 @@ def register_middleware(app: FastAPI):
     # CORS: Always at the end
     if settings.MIDDLEWARE_CORS:
         from fastapi.middleware.cors import CORSMiddleware
-
         app.add_middleware(
             CORSMiddleware,
             allow_origins=['*'],
@@ -62,8 +62,8 @@ def register_router(app: FastAPI):
     :return:
     """
     # GraphQL
-    schema = strawberry.Schema(query=Query, config=StrawberryConfig(auto_camel_case=True),)
-    graphql_app = GraphQLRouter(schema)
+    schema = strawberry.Schema(query=Query, config=StrawberryConfig(auto_camel_case=True), )
+    graphql_app = GraphQLRouter(schema=schema)
     app.include_router(graphql_app, prefix='/graphql')
 
     # API

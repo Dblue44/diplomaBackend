@@ -6,6 +6,6 @@ react_app = APIRouter()
 
 @logger.catch
 @react_app.post("/photo")
-async def send_to_telegram(request):
+async def get_photo(request):
 
     return {"123"}
