@@ -4,9 +4,7 @@ from app.logger import logger
 from app.core.conf import settings
 from app.core.registrar import register_app
 
-
 app = register_app()
-
 
 if __name__ == '__main__':
     try:
