@@ -15,6 +15,7 @@ class Music(Document):
     artist: str
     trackName: str
     photoId: UUID = Field(default_factory=uuid4)
+    musicId: UUID = Field(default_factory=uuid4)
 
 
 

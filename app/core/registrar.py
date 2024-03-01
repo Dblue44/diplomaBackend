@@ -3,8 +3,8 @@ from contextlib import asynccontextmanager
 
 import strawberry
 from fastapi import FastAPI
-from motor.motor_asyncio import AsyncIOMotorClient
-from beanie import init_beanie
+#from motor.motor_asyncio import AsyncIOMotorClient
+#from beanie import init_beanie
 
 from app.logger import logger
 from .conf import settings
@@ -19,10 +19,10 @@ from app.services.graphql.mutation import Mutation
 
 @asynccontextmanager
 async def lifespan(application: FastAPI) -> typing.AsyncGenerator[None, None]:
-    logger.info("Start connection to MongoDB")
-    client = AsyncIOMotorClient(settings.MONGO_URL)
-    await init_beanie(database=client.db_name, document_models=[])
-    logger.info("MongoDB was connected successfully")
+    #logger.info("Start connection to MongoDB")
+    #client = AsyncIOMotorClient(settings.MONGO_URL)
+    #await init_beanie(database=client.db_name, document_models=[])
+    #logger.info("MongoDB was connected successfully")
     yield
 
 
@@ -78,7 +78,7 @@ def register_router(app: FastAPI):
     :return:
     """
     # GraphQL
-    schema = strawberry.Schema(query=Query, mutation=Mutation, config=StrawberryConfig(auto_camel_case=True), )
+    schema = strawberry.Schema(query=Query, mutation=Mutation, config=StrawberryConfig(auto_camel_case=True))
     graphql_app = GraphQLRouter(schema=schema)
     app.include_router(graphql_app, prefix='/graphql')
 

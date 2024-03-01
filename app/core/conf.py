@@ -1,16 +1,6 @@
 import os
-from abc import ABC
 from functools import lru_cache
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from fastapi_storages import S3Storage
-
-
-class VKCloudS3Storage(S3Storage, ABC):
-    AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
-    AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
-    AWS_S3_BUCKET_NAME = os.environ['AWS_S3_BUCKET_NAME']
-    AWS_S3_ENDPOINT_URL = os.environ['AWS_S3_ENDPOINT_URL']
-    AWS_DEFAULT_REGION = os.environ['AWS_DEFAULT_REGION']
 
 
 class Settings(BaseSettings):
@@ -27,6 +17,13 @@ class Settings(BaseSettings):
     DOCS_URL: str | None = f'{API_V1_STR}/docs'
     REDOCS_URL: str | None = f'{API_V1_STR}/redocs'
     OPENAPI_URL: str | None = f'{API_V1_STR}/openapi'
+
+    # AWS
+    AWS_ACCESS_KEY_ID: str = os.environ['AWS_ACCESS_KEY_ID']
+    AWS_SECRET_ACCESS_KEY: str = os.environ['AWS_SECRET_ACCESS_KEY']
+    AWS_S3_BUCKET_NAME: str = os.environ['AWS_S3_BUCKET_NAME']
+    AWS_S3_ENDPOINT_URL: str = os.environ['AWS_S3_ENDPOINT_URL']
+    AWS_DEFAULT_REGION: str = os.environ['AWS_DEFAULT_REGION']
 
     # Redis
     REDIS_HOST: str = 'localhost'
