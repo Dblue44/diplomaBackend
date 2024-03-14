@@ -1,21 +1,17 @@
-from uuid import UUID, uuid4
-from pydantic import Field
+# from uuid import UUID, uuid4
+# from pydantic import Field
+from typing import List
+from app.services.celery.celery import Prediction
+from app.services.graphql.mutation import Music
 from beanie import Document
 
 
-class Prediction(Document):
-    happy: float
-    sad: float
-    normal: float
-    angry: float
-
-
-class Music(Document):
-    id: UUID = Field(default_factory=uuid4)
+class MusicDoc(Document):
     artist: str
     trackName: str
-    photoId: UUID = Field(default_factory=uuid4)
-    musicId: UUID = Field(default_factory=uuid4)
+    photoId: str
+    musicId: str
 
 
-
+def find_music(prediction: Prediction) -> List[Music]:
+    pass

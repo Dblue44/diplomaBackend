@@ -19,7 +19,8 @@ async def get_photo_from_aws(photoId: str) -> bytes | None:
         logger.error("S3 Error (Image): ", err)
         return None;
 
-async def get_music_from_aws(musicId: str) -> bytes:
+
+async def get_music_from_aws(musicId: str) -> bytes | None:
     session = boto3.session.Session()
     try:
         s3 = session.client(
