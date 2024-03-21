@@ -17,7 +17,7 @@ async def get_photo_from_aws(photoId: str) -> bytes | None:
         return photo['Body'].read()
     except ClientError as err:
         logger.error("S3 Error (Image): ", err)
-        return None;
+        return None
 
 
 async def get_music_from_aws(musicId: str) -> bytes | None:
@@ -33,4 +33,4 @@ async def get_music_from_aws(musicId: str) -> bytes | None:
         return photo['Body'].read()
     except ClientError as err:
         logger.error("S3 Error (Music): ", err)
-        return None;
+        return None

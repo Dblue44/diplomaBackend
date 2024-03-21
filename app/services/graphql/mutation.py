@@ -30,15 +30,9 @@ class Predict:
 @strawberry.type
 class Mutation:
     @strawberry.mutation
-    async def photoUpload(self, file: Upload) -> Predict:
+    def photoUpload(self, file: Upload) -> Predict:
         fileData: bytes = await file.read()
         photoPredictionTask = predict_photo.delay(fileData)
         photoPrediction = photoPredictionTask.get()
-        # music = [Music(id="11", artist="artist1", trackName="track1", photoId="file_png"),
-        #          Music(id="12", artist="artist2", trackName="track2", photoId="file_png"),
-        #          Music(id="13", artist="artist3", trackName="track3", photoId="file_png"),
-        #          Music(id="14", artist="artist4", trackName="track4", photoId="file_png")]
         music = find_music(photoPrediction)
-        predictRes = Predict(prediction=photoPrediction, music=music)
-        return predictRes
-
+        return Predict(prediction=photoPrediction, music=music)

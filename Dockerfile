@@ -26,7 +26,6 @@ FROM dev as prod
 
 COPY ./app .
 
-EXPOSE 8024:80
+EXPOSE 8085:80
 
-CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "80"]
-CMD []
+CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "80", "--reload"]

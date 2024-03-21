@@ -1,0 +1,25 @@
+version: "1"
+
+services:
+  server:
+    container_name: diploma_backend
+    build: .
+    network_mode: host
+    restart: always
+    networks:
+      - app-tier
+  tf-serving:
+    image: tensorflow/serving
+    restart: always
+    ports:
+      - "8500:8500"
+      - "8501:8501"
+    volumes:
+      - ./serving:/models
+      - ./serving_docker.config:serving_docker.config
+    command: --model_config_file=serving_docker.config
+    networks:
+      - app-tier
+networks:
+  app-tier:
+    driver: bridge
