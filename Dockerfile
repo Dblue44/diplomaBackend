@@ -1,31 +1,59 @@
-FROM python:3.10-alpine as base
+FROM python:3.10-slim as base
 
-RUN apt-get update && \
-    apt install -y --no-install-recommends python3 && \
-    rm -rf /var/cahce/apt
+ENV WORKDIR /backend
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=on \
     PIP_DISABLE_PIP_VERSION_CHECK=on \
     PIP_DEFAULT_TIMEOUT=60 \
+    POETRY_VERSION=1.8.2 \
+    POETRY_HOME="/opt/poetry" \
+    POETRY_NO_INTERACTION=1 \
+    POETRY_VIRTUALENVS_CREATE=false \
+    VIRTUAL_ENV="/venv" \
     PYTHONPATH=$WORKDIR
 
-ENV WORKDIR /backend
+ENV PATH="$POETRY_HOME/bin:$VIRTUAL_ENV/bin:$PATH"
+
 WORKDIR $WORKDIR
 
-FROM base as dev
+RUN python -m venv $VIRTUAL_ENV
 
-COPY poetry.lock pyproject.toml $WORKDIR/
+ENV PYTHONPATH="$WORKDIR:$PYTHONPATH"
 
-RUN python3 -m pip install poetry && \
-    poetry config virtualenvs.create false && \
+FROM base as builder
+
+RUN apt-get update && \
+    apt-get install -y \
+    apt-transport-https \
+    gnupg \
+    ca-certificates \
+    build-essential \
+    git \
+    nano \
+    curl
+
+RUN --mount=type=cache,target=/root/.cache \
+    curl -sSL https://install.python-poetry.org | python -
+
+FROM builder as dev
+
+WORKDIR $WORKDIR
+
+COPY poetry.lock pyproject.toml ./
+
+RUN poetry config virtualenvs.create false && \
     poetry install --no-cache --no-root --no-dev
 
 FROM dev as prod
 
-COPY ./app .
+WORKDIR $WORKDIR
+
+COPY ./app ./app
+
+COPY .env .env
 
 EXPOSE 8085:80
 
-CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "80", "--reload"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80", "--reload"]

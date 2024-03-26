@@ -17,6 +17,11 @@ class MusicDoc(Document):
 
 
 def find_music(prediction: Prediction) -> List[Music] | None:
+    """
+    Search for music by a given distribution of emotions
+    :param prediction:
+    :return:
+    """
     musics: list = await MusicDoc.find(_get_filters(prediction)).to_list()
     return
 

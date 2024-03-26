@@ -23,6 +23,11 @@ def resize_image(faceImage: ndarray) -> ndarray:
 
 
 def find_faces(photo: bytes) -> List[Face]:
+    """
+    Find first face on photo and resize it to 60x60 pixels
+    :param photo:
+    :return List[Face]:
+    """
     npArray = np.frombuffer(photo, np.uint8)
     image = cv2.imdecode(npArray, cv2.IMREAD_COLOR)
     faces = face_recognition.face_locations(image)

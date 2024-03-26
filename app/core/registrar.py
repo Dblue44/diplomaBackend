@@ -44,9 +44,6 @@ def register_app():
     # Routers
     register_router(app)
 
-    # Exceptions
-    # register_exception(app)
-
     return app
 
 

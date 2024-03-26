@@ -1,10 +1,10 @@
-from celery import Celery
 from app.core.conf import settings
+from app.services.ml.faceMl import find_faces
 from pydantic import BaseModel, Field
+from celery import Celery
 import requests
 import json
 
-from app.services.ml.faceMl import find_faces
 
 celery = Celery()
 celery.conf.broker_url = f'redis://{settings.REDIS_HOST}:{settings.REDIS_PORT}/{settings.REDIS_DB}'
@@ -22,6 +22,11 @@ class Prediction(BaseModel):
 
 @celery.task(name="predict_photo")
 def predict_photo(photo: bytes) -> Prediction:
+    """
+    Predicting emotions in a photo using Tensorflow Serving deployed in Docker
+    :param photo:
+    :return Prediction:
+    """
     faces = find_faces(photo)
     data = json.dumps({"signature_name": "serving_default", "instances": faces[0]})
     json_response = requests.post(url, data=data, headers=headers)
