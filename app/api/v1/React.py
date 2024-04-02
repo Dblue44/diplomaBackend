@@ -1,8 +1,33 @@
-from fastapi import APIRouter, Response, HTTPException
+from typing import List
+
+from fastapi import APIRouter, Response, HTTPException, File
+from pydantic import BaseModel
+
 from app.logger import logger
 from app.services.aws.aws import get_photo_from_aws, get_music_from_aws
+from app.services.beanie.beanie import find_music
+from app.services.celery.celery import predict_photo
 
 react_app = APIRouter()
+
+
+class Prediction(BaseModel):
+    happy: float
+    sad: float
+    normal: float
+    angry: float
+
+
+class Music(BaseModel):
+    id: str
+    artist: str
+    trackName: str
+    photoId: str
+
+
+class Predict(BaseModel):
+    prediction: Prediction
+    music: List[Music]
 
 
 @logger.catch
@@ -23,3 +48,15 @@ async def get_music(musicId: str) -> Response:
         return Response(content=bytesData, media_type="audio/mpeg")
     else:
         HTTPException(status_code=204, detail="Music not found")
+
+
+@logger.catch
+@react_app.post("/uploadMusic")
+async def upload_photo(file: bytes = File()) -> Predict:
+    HTTPException(status_code=204, detail="Лица на фотографии не найдены")
+    photoPredictionTask = predict_photo.delay(file)
+    photoPrediction = photoPredictionTask.get()
+    if photoPrediction is None:
+        HTTPException(status_code=204, detail="Лица на фотографии не найдены")
+    music = await find_music(photoPrediction)
+    return Predict(prediction=photoPrediction, music=music)

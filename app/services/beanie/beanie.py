@@ -1,8 +1,15 @@
 from typing import List
 from app.services.celery.celery import Prediction
-from app.services.graphql.mutation import Music
+from pydantic import BaseModel
 from beanie import Document
 from beanie.operators import And
+
+
+class Music(BaseModel):
+    id: str
+    artist: str
+    trackName: str
+    photoId: str
 
 
 class MusicDoc(Document):
@@ -16,7 +23,7 @@ class MusicDoc(Document):
     angry: float
 
 
-def find_music(prediction: Prediction) -> List[Music] | None:
+async def find_music(prediction: Prediction) -> List[Music] | None:
     """
     Search for music by a given distribution of emotions
     :param prediction:

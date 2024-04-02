@@ -1,7 +1,6 @@
 import typing
 from contextlib import asynccontextmanager
 
-import strawberry
 from fastapi import FastAPI
 # from motor.motor_asyncio import AsyncIOMotorClient
 # from beanie import init_beanie
@@ -11,10 +10,7 @@ from .conf import settings
 from app.api.routers import v1
 from app.utils.health_check import ensure_unique_route_names
 from app.utils.openapi import simplify_operation_ids
-from strawberry.fastapi import GraphQLRouter
-from strawberry.schema.config import StrawberryConfig
-from app.services.graphql.query import Query
-from app.services.graphql.mutation import Mutation
+
 
 
 @asynccontextmanager
@@ -74,10 +70,6 @@ def register_router(app: FastAPI):
     :param app: FastAPI
     :return:
     """
-    # GraphQL
-    schema = strawberry.Schema(query=Query, mutation=Mutation, config=StrawberryConfig(auto_camel_case=True))
-    graphql_app = GraphQLRouter(schema=schema)
-    app.include_router(graphql_app, prefix='/graphql')
 
     # API
     app.include_router(v1)
