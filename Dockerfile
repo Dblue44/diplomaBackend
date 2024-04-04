@@ -52,8 +52,10 @@ WORKDIR $WORKDIR
 
 COPY ./app ./app
 
-COPY .env .env
-
 EXPOSE 8085:80
 
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80", "--reload"]
+
+WORKDIR $WORKDIR/app
+
+CMD ["celery", "-A", "tasks:celery", "--loglevel=INFO"]

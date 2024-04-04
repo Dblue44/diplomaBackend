@@ -26,9 +26,8 @@ class Settings(BaseSettings):
     AWS_DEFAULT_REGION: str = os.environ['AWS_DEFAULT_REGION']
 
     # Redis
-    REDIS_HOST: str = 'localhost'
-    REDIS_PORT: int = 6379
-    REDIS_DB: str = '0'
+    CELERY_BROKER_URL: str = os.environ['CELERY_BROKER_URL']
+    CELERY_RESULT_BACKEND: str = os.environ['CELERY_RESULT_BACKEND']
 
     # MongoDB
     MONGO_HOST: str = 'localhost'

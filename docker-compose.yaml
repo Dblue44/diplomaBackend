@@ -1,4 +1,4 @@
-version: "1"
+version: "1.5"
 
 services:
   server:
@@ -7,6 +7,22 @@ services:
     restart: always
     env_file:
       - .env
+  mongodb:
+    image: mongo:7.0.8-jammy
+    restart: unless-stopped
+    ports:
+      - '27017:27017'
+    volumes:
+      - db-data:/data/db
+    depends_on:
+      - server
+  redis:
+    restart: unless-stopped
+    image: redis:7.0.5-alpine
+    expose:
+      - 6379
+    depends_on:
+      - server
   tf-serving:
     image: tensorflow/serving
     restart: always
@@ -17,3 +33,6 @@ services:
       - ./serving:/models
       - ./serving_docker.config:/models/serving_docker.config
     command: --model_config_file=/models/serving_docker.config
+
+volumes:
+  db-data:

@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Annotated
 
 from fastapi import APIRouter, Response, HTTPException, File
 from pydantic import BaseModel
@@ -6,7 +6,7 @@ from pydantic import BaseModel
 from app.logger import logger
 from app.services.aws.aws import get_photo_from_aws, get_music_from_aws
 from app.services.beanie.beanie import find_music
-from app.services.celery.celery import predict_photo
+from app.tasks import predict_photo
 
 react_app = APIRouter()
 
@@ -37,7 +37,7 @@ async def get_photo(fileId: str) -> Response:
     if bytesData:
         return Response(content=bytesData, media_type="image/avif,image/webp,image/apng,image/svg+xml,image/png")
     else:
-        HTTPException(status_code=204, detail="Photo not found")
+        raise HTTPException(status_code=204, detail="Photo not found")
 
 
 @logger.catch
@@ -47,13 +47,12 @@ async def get_music(musicId: str) -> Response:
     if bytesData:
         return Response(content=bytesData, media_type="audio/mpeg")
     else:
-        HTTPException(status_code=204, detail="Music not found")
+        raise HTTPException(status_code=204, detail="Music not found")
 
 
 @logger.catch
-@react_app.post("/uploadMusic")
-async def upload_photo(file: bytes = File()) -> Predict:
-    HTTPException(status_code=204, detail="Лица на фотографии не найдены")
+@react_app.post("/uploadPhoto")
+async def upload_photo(file: Annotated[bytes, File()]) -> Predict:
     photoPredictionTask = predict_photo.delay(file)
     photoPrediction = photoPredictionTask.get()
     if photoPrediction is None:

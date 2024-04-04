@@ -1,5 +1,5 @@
 from typing import List
-from app.services.celery.celery import Prediction
+from app.tasks import Prediction
 from pydantic import BaseModel
 from beanie import Document
 from beanie.operators import And

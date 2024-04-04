@@ -1,14 +1,14 @@
-from app.core.conf import settings
-from app.services.ml.faceMl import find_faces
-from app.logger import logger
+from core.conf import settings
+from services.ml.faceMl import find_faces
+from logger import logger
 from pydantic import BaseModel, Field
 from celery import Celery
 import requests
 import json
 
-celery = Celery()
-celery.conf.broker_url = f'redis://{settings.REDIS_HOST}:{settings.REDIS_PORT}/{settings.REDIS_DB}'
-celery.conf.result_backend = f'redis://{settings.REDIS_HOST}:{settings.REDIS_PORT}/{settings.REDIS_DB}'
+celery = Celery("tasks")
+celery.conf.broker_url = settings.CELERY_BROKER_URL
+celery.conf.result_backend = settings.CELERY_RESULT_BACKEND
 url = f"http://{settings.TF_HOST}:{settings.TF_PORT}/{settings.TF_VERSION}/models/e-motion_detector:predict"
 headers = {"content-type": "application/json"}
 
