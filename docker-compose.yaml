@@ -1,31 +1,60 @@
-version: "1.5"
+version: "1.6"
 
 services:
   server:
     container_name: diploma_backend
-    build: .
-    restart: always
+    image: diploma
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: [ "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80", "--reload" ]
+    restart: unless-stopped
+    volumes:
+      - ./logs/backend:/opt/logs
+    ports:
+      - '8085:80'
     env_file:
       - .env
+    depends_on:
+      - mongodb
+      - tf-serving
+  worker:
+    command: [ "celery", "-A", "app.worker", "worker", "-l", "INFO", "-P", "eventlet" ]
+    env_file:
+      - .env
+    image: diploma
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./logs/worker:/opt/logs
+    depends_on:
+      - redis
+  flower:
+    image: mher/flower
+    command: [ "celery", "-b", "redis://redis:6379", "flower" ]
+    restart: unless-stopped
+    ports:
+      - "5555:5555"
+    depends_on:
+      - redis
   mongodb:
     image: mongo:7.0.8-jammy
     restart: unless-stopped
+    env_file:
+      - .dbenv
     ports:
-      - '27017:27017'
+      - '28017:27017'
     volumes:
       - db-data:/data/db
-    depends_on:
-      - server
   redis:
     restart: unless-stopped
     image: redis:7.0.5-alpine
     expose:
       - 6379
-    depends_on:
-      - server
   tf-serving:
     image: tensorflow/serving
-    restart: always
+    restart: unless-stopped
     ports:
       - "8500:8500"
       - "8501:8501"
@@ -36,3 +65,4 @@ services:
 
 volumes:
   db-data:
+    driver: local

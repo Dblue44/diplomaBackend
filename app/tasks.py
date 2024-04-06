@@ -1,16 +1,19 @@
+from logger import logger
 from core.conf import settings
 from services.ml.faceMl import find_faces
-from logger import logger
 from pydantic import BaseModel, Field
 from celery import Celery
 import requests
 import json
 
-celery = Celery("tasks")
+celery = Celery("app")
 celery.conf.broker_url = settings.CELERY_BROKER_URL
 celery.conf.result_backend = settings.CELERY_RESULT_BACKEND
 url = f"http://{settings.TF_HOST}:{settings.TF_PORT}/{settings.TF_VERSION}/models/e-motion_detector:predict"
 headers = {"content-type": "application/json"}
+celery.include = [
+    "app.tasks"
+]
 
 
 class Prediction(BaseModel):
@@ -21,9 +24,9 @@ class Prediction(BaseModel):
 
 
 @celery.task(name="predict_photo")
-def predict_photo(photo: bytes) -> Prediction | None:
+def predict_photo(photo: str) -> Prediction | None:
     """
-    Predicting emotions in a photo using Tensorflow Serving deployed in Docker
+    Predicting emotions in a photo using Tensorflow Serving deployed in docker
     :param photo: photo data
     :return Prediction: Prediction class
     """

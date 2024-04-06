@@ -8,7 +8,7 @@ app = register_app()
 
 if __name__ == '__main__':
     try:
-        logger.info("Start FastAPI")
+        logger.info("Запуск FastAPI")
         uvicorn.run(
             app=f'{Path(__file__).stem}:app',
             host=settings.UVICORN_HOST,
@@ -16,4 +16,4 @@ if __name__ == '__main__':
             reload=settings.UVICORN_RELOAD,
         )
     except Exception as e:
-        logger.error(f'FastAPI start filed: {e}')
+        logger.error(f'FastAPI завершился с ошибкой {e}')

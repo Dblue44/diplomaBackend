@@ -5,7 +5,6 @@ from fastapi import FastAPI
 # from motor.motor_asyncio import AsyncIOMotorClient
 # from beanie import init_beanie
 
-from app.logger import logger
 from .conf import settings
 from app.api.routers import v1
 from app.utils.health_check import ensure_unique_route_names

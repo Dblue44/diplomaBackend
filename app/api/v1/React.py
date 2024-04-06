@@ -5,7 +5,6 @@ from pydantic import BaseModel
 
 from app.logger import logger
 from app.services.aws.aws import get_photo_from_aws, get_music_from_aws
-from app.services.beanie.beanie import find_music
 from app.tasks import predict_photo
 
 react_app = APIRouter()
@@ -52,10 +51,13 @@ async def get_music(musicId: str) -> Response:
 
 @logger.catch
 @react_app.post("/uploadPhoto")
-async def upload_photo(file: Annotated[bytes, File()]) -> Predict:
-    photoPredictionTask = predict_photo.delay(file)
+async def upload_photo(file: Annotated[bytes, File()]) -> None:
+    logger.info(f"Получено фото")
+    photoPredictionTask = predict_photo.apply_async(args=[file], countdown=5)
     photoPrediction = photoPredictionTask.get()
     if photoPrediction is None:
-        HTTPException(status_code=204, detail="Лица на фотографии не найдены")
-    music = await find_music(photoPrediction)
-    return Predict(prediction=photoPrediction, music=music)
+        logger.warning("Лица на фотографии не найдены")
+        raise HTTPException(status_code=204, detail="Лица на фотографии не найдены")
+    # music = await find_music(photoPrediction)
+    music1 = Music(id="1", artist="2", trackName="3", photoId="4")
+    return Predict(prediction=photoPrediction, music=[music1])

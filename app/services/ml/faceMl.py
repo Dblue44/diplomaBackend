@@ -5,7 +5,6 @@ from typing import List
 from numpy import ndarray
 from pydantic import BaseModel, ConfigDict
 
-
 faceProto = "C:/Users/stakh/Models/opencv_face_detector.pbtxt"
 faceModel = "C:/Users/stakh/Models/opencv_face_detector_uint8.pb"
 ml = cv2.dnn.readNet(faceModel, faceProto)
@@ -31,10 +30,9 @@ def find_faces(photo: bytes) -> List[Face] | None:
     npArray = np.frombuffer(photo, np.uint8)
     image = cv2.imdecode(npArray, cv2.IMREAD_COLOR)
     faces = face_recognition.face_locations(image)
-    faceImages = []
     if len(faces) == 0:
         return None
-
+    faceImages = []
     for face in faces:
         faceImage = image[face[0]:face[2], face[3]:face[1]]
         resizedFaceImage = resize_image(faceImage)

@@ -31,8 +31,10 @@ class Settings(BaseSettings):
 
     # MongoDB
     MONGO_HOST: str = 'localhost'
-    MONGO_PORT: int = 27017
-    MONGO_URL: str = f'mongodb://{MONGO_HOST}:{MONGO_PORT}'
+    MONGO_PORT: int = 28017
+    MONGO_USER: str = os.environ['MONGO_USER']
+    MONGO_PASS: str = os.environ['MONGO_PASS']
+    MONGO_URL: str = f'mongodb://{MONGO_USER}:{MONGO_PASS}@{MONGO_HOST}:{MONGO_PORT}'
 
     # Tensorflow
     TF_HOST: str = 'localhost'
