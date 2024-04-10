@@ -1,10 +1,9 @@
 from typing import List, Annotated
-
-from fastapi import APIRouter, Response, HTTPException, File
+from fastapi import APIRouter, Response, HTTPException, File, status
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
-
 from app.logger import logger
-from app.services.aws.aws import get_photo_from_aws, get_music_from_aws
+from app.services import get_photo_from_aws, get_music_from_aws, find_music
 from app.tasks import predict_photo
 
 react_app = APIRouter()
@@ -53,11 +52,11 @@ async def get_music(musicId: str) -> Response:
 @react_app.post("/uploadPhoto")
 async def upload_photo(file: Annotated[bytes, File()]) -> None:
     logger.info(f"Получено фото")
-    photoPredictionTask = predict_photo.apply_async(args=[file], countdown=5)
-    photoPrediction = photoPredictionTask.get()
-    if photoPrediction is None:
-        logger.warning("Лица на фотографии не найдены")
-        raise HTTPException(status_code=204, detail="Лица на фотографии не найдены")
+    photoPredictionTask = predict_photo.apply_async(args=[file], countdown=10)
+    photoPredictionResult = photoPredictionTask.get()
+    if type(photoPredictionResult) is str:
+        logger.warning(photoPredictionResult)
+        raise HTTPException(status_code=status.HTTP_204_NO_CONTENT, detail=photoPredictionResult)
     # music = await find_music(photoPrediction)
     music1 = Music(id="1", artist="2", trackName="3", photoId="4")
-    return Predict(prediction=photoPrediction, music=[music1])
+    return Predict(prediction=photoPredictionResult, music=[music1])

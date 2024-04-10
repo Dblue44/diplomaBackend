@@ -1,8 +1,7 @@
 import uvicorn
 from path import Path
 from app.logger import logger
-from app.core.conf import settings
-from app.core.registrar import register_app
+from app.core import settings, register_app
 
 app = register_app()
 

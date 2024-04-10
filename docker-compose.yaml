@@ -19,7 +19,8 @@ services:
       - mongodb
       - tf-serving
   worker:
-    command: [ "celery", "-A", "app.worker", "worker", "-l", "INFO", "-P", "eventlet" ]
+    container_name: celery
+    command: [ "celery", "-A", "app.tasks:celery", "worker", "-l", "INFO", "-P", "eventlet" ]
     env_file:
       - .env
     image: diploma
@@ -31,14 +32,16 @@ services:
     depends_on:
       - redis
   flower:
+    container_name: flower
     image: mher/flower
     command: [ "celery", "-b", "redis://redis:6379", "flower" ]
     restart: unless-stopped
     ports:
-      - "5555:5555"
+      - '5555:5555'
     depends_on:
       - redis
   mongodb:
+    container_name: mongodb
     image: mongo:7.0.8-jammy
     restart: unless-stopped
     env_file:
@@ -48,16 +51,18 @@ services:
     volumes:
       - db-data:/data/db
   redis:
+    container_name: redis
     restart: unless-stopped
     image: redis:7.0.5-alpine
     expose:
-      - 6379
+      - 6479
   tf-serving:
+    container_name: tf-serving
     image: tensorflow/serving
     restart: unless-stopped
     ports:
-      - "8500:8500"
-      - "8501:8501"
+      - '8500:8500'
+      - '8501:8501'
     volumes:
       - ./serving:/models
       - ./serving_docker.config:/models/serving_docker.config

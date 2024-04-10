@@ -1,15 +1,11 @@
 import typing
 from contextlib import asynccontextmanager
-
 from fastapi import FastAPI
 # from motor.motor_asyncio import AsyncIOMotorClient
 # from beanie import init_beanie
-
-from .conf import settings
-from app.api.routers import v1
-from app.utils.health_check import ensure_unique_route_names
-from app.utils.openapi import simplify_operation_ids
-
+from app.core import settings
+from app.api import v1
+from app.utils import ensure_unique_route_names, simplify_operation_ids
 
 
 @asynccontextmanager

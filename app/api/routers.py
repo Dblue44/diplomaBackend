@@ -1,6 +1,6 @@
 from fastapi import APIRouter
-from app.core.conf import settings
-from app.api.v1.React import react_app
+from app.core import settings
+from app.api.v1 import react_app
 
 v1 = APIRouter(prefix=settings.API_V1_STR)
 
