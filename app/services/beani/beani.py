@@ -34,12 +34,12 @@ async def find_music(prediction: Prediction) -> List[Music] | None:
 
 
 def _get_filters(prediction: Prediction) -> And:
-    _happy = And(MusicDoc.happy > prediction.happy - 0.1,
-                 MusicDoc.happy < prediction.happy + 0.1)
-    _sad = And(MusicDoc.sad > prediction.sad - 0.1,
-               MusicDoc.sad < prediction.sad + 0.1)
-    _normal = And(MusicDoc.normal > prediction.normal - 0.1,
-                  MusicDoc.normal < prediction.normal + 0.1)
-    _angry = And(MusicDoc.angry > prediction.angry - 0.1,
-                 MusicDoc.angry < prediction.angry + 0.1)
+    _happy = And(MusicDoc.happy > (prediction.happy - 0.1),
+                 MusicDoc.happy < (prediction.happy + 0.1))
+    _sad = And(MusicDoc.sad > (prediction.sad - 0.1),
+               MusicDoc.sad < (prediction.sad + 0.1))
+    _normal = And(MusicDoc.normal > (prediction.normal - 0.1),
+                  MusicDoc.normal < (prediction.normal + 0.1))
+    _angry = And(MusicDoc.angry > (prediction.angry - 0.1),
+                 MusicDoc.angry < (prediction.angry + 0.1))
     return And(_happy, _sad, _normal, _angry)

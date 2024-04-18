@@ -56,6 +56,7 @@ services:
     image: redis:7.0.5-alpine
     expose:
       - 6479
+
   tf-serving:
     container_name: tf-serving
     image: tensorflow/serving
@@ -68,6 +69,24 @@ services:
       - ./serving_docker.config:/models/serving_docker.config
     command: --model_config_file=/models/serving_docker.config
 
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - 9090:9090
+    volumes:
+      - ./prometheus_data/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - 3000:3000
+    volumes:
+      - ./logs/grafana:/var/lib/grafana
 volumes:
   db-data:
     driver: local

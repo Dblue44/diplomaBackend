@@ -2,8 +2,10 @@ import uvicorn
 from path import Path
 from app.logger import logger
 from app.core import settings, register_app
+from prometheus_fastapi_instrumentator import Instrumentator
 
 app = register_app()
+Instrumentator().instrument(app).expose(app)
 
 if __name__ == '__main__':
     try:

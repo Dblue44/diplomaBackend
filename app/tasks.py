@@ -1,7 +1,7 @@
 from app.logger import logger
 from app.core import settings
 from app.services import find_faces
-from pydantic import BaseModel, Field
+from app.api import Prediction
 from celery import Celery
 import requests
 import json
@@ -12,13 +12,6 @@ celery.conf.result_backend = settings.CELERY_RESULT_BACKEND
 celery.include = [
     "app.tasks"
 ]
-
-
-class Prediction(BaseModel):
-    happy: float = Field(default=1.0)
-    sad: float = Field(default=1.0)
-    normal: float = Field(default=1.0)
-    angry: float = Field(default=1.0)
 
 
 @celery.task(name="predict_photo")
@@ -32,9 +25,9 @@ def predict_photo(photo: str) -> Prediction | str:
     if faces is None:
         return "Нет лиц на фотографии"
     data = json.dumps({"signature_name": "serving_default", "instances": faces[0]})
-    logger.info(f"Отправлен запрос к TF Serving")
     try:
         json_response = requests.post(settings.TF_URL, data=data, headers={"content-type": "application/json"})
+        logger.info(f"Отправлен запрос к TF Serving")
     except requests.exceptions.Timeout:
         logger.error("Timeout запроса к TF Serving")
         return "Ошибка подключения к TF Serving."
