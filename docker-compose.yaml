@@ -18,28 +18,7 @@ services:
     depends_on:
       - mongodb
       - tf-serving
-  worker:
-    container_name: celery
-    command: [ "celery", "-A", "app.tasks:celery", "worker", "-l", "INFO", "-P", "eventlet" ]
-    env_file:
-      - .env
-    image: diploma
-    build:
-      context: .
-      dockerfile: Dockerfile
-    volumes:
-      - ./logs/worker:/opt/logs
-    depends_on:
-      - redis
-  flower:
-    container_name: flower
-    image: mher/flower
-    command: [ "celery", "-b", "redis://redis:6379", "flower" ]
-    restart: unless-stopped
-    ports:
-      - '5555:5555'
-    depends_on:
-      - redis
+
   mongodb:
     container_name: mongodb
     image: mongo:7.0.8-jammy
@@ -50,12 +29,6 @@ services:
       - '28017:27017'
     volumes:
       - db-data:/data/db
-  redis:
-    container_name: redis
-    restart: unless-stopped
-    image: redis:7.0.5-alpine
-    expose:
-      - 6479
 
   tf-serving:
     container_name: tf-serving
@@ -68,7 +41,6 @@ services:
       - ./models/cnn_model:/models/cnn_model
       - ./serving-docker.config:/models/models.config
     command: --model_config_file=/models/models.config
-
 
   prometheus:
     image: prom/prometheus

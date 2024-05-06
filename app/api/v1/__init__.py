@@ -1,1 +1,1 @@
-from React import react_app, Prediction
+from .React import react_app, Prediction

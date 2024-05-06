@@ -1,2 +1,2 @@
-from conf import settings
-from registrar import register_app
+from .conf import settings
+from .registrar import register_app

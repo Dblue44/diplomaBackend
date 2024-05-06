@@ -2,20 +2,12 @@ from app.logger import logger
 from app.core import settings
 from app.services import find_faces
 from app.api import Prediction
-from celery import Celery
 import requests
 import json
 
-celery = Celery("app")
-celery.conf.broker_url = settings.CELERY_BROKER_URL
-celery.conf.result_backend = settings.CELERY_RESULT_BACKEND
-celery.include = [
-    "app.tasks"
-]
 
-
-@celery.task(name="predict_photo")
-def predict_photo(photo: bytes) -> Prediction | str:
+@logger.catch
+async def predict_photo(photo: bytes) -> Prediction | str:
     """
     Predicting emotions in a photo using Tensorflow Serving deployed in docker
     :param photo: photo data
@@ -27,7 +19,7 @@ def predict_photo(photo: bytes) -> Prediction | str:
     data = json.dumps({"signature_name": "serving_default", "instances": faces[0]})
     try:
         json_response = requests.post(settings.TF_URL, data=data, headers={"content-type": "application/json"})
-        logger.info(f"Отправлен запрос к TF Serving")
+        logger.info(f"Ответ от TF Serving: {json.loads(json_response.text)}")
     except requests.exceptions.Timeout:
         logger.error("Timeout запроса к TF Serving")
         return "Ошибка подключения к TF Serving."

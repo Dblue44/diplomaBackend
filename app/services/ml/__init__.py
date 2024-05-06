@@ -1,1 +1,1 @@
-from faceMl import find_faces
+from .faceMl import find_faces

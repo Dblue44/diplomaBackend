@@ -64,12 +64,11 @@ async def get_music(musicId: str) -> Response:
 @react_app.post("/uploadPhoto")
 async def upload_photo(file: Annotated[bytes, File()]) -> None:
     logger.info(f"Получено фото")
-    photoPredictionTask = predict_photo.apply_async(args=[file], countdown=10)
-    photoPredictionResult: Prediction | str = photoPredictionTask.get()
+    photoPredictionResult = await predict_photo(file)
     if type(photoPredictionResult) is str:
         logger.warning(f"Получена ошибка от Celery: {photoPredictionResult}")
         raise HTTPException(status_code=status.HTTP_204_NO_CONTENT, detail=photoPredictionResult)
     # music = await find_music(photoPrediction)
-
+    print(photoPredictionResult)
     music1 = Music(id="1", artist="2", trackName="3", photoId="4")
     return Predict(prediction=photoPredictionResult, music=[music1])

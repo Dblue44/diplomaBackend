@@ -1,9 +1,13 @@
 from typing import List
-from app.tasks import Prediction
 from pydantic import BaseModel
 from beanie import Document
 from beanie.operators import And
 
+class Prediction(BaseModel):
+    happy: float
+    sad: float
+    normal: float
+    angry: float
 
 class Music(BaseModel):
     id: str
