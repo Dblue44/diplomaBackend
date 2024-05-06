@@ -30,7 +30,7 @@ async def find_music(prediction: Prediction) -> List[Music] | None:
     :return:
     """
     musics: list = await MusicDoc.find(_get_filters(prediction)).to_list()
-    return
+    return musics
 
 
 def _get_filters(prediction: Prediction) -> And:

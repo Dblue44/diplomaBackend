@@ -15,7 +15,7 @@ celery.include = [
 
 
 @celery.task(name="predict_photo")
-def predict_photo(photo: str) -> Prediction | str:
+def predict_photo(photo: bytes) -> Prediction | str:
     """
     Predicting emotions in a photo using Tensorflow Serving deployed in docker
     :param photo: photo data

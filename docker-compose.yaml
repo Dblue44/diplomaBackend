@@ -1,4 +1,4 @@
-version: "1.0"
+version: "1.1"
 
 services:
   server:
@@ -65,9 +65,9 @@ services:
       - '8500:8500'
       - '8501:8501'
     volumes:
-      - ./serving:/models
-      - ./serving_docker.config:/models/serving_docker.config
-    command: --model_config_file=/models/serving_docker.config
+      - ./models/cnn_model:/models/cnn_model
+      - ./serving-docker.config:/models/models.config
+    command: --model_config_file=/models/models.config
 
 
   prometheus:
