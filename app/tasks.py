@@ -1,9 +1,16 @@
 from app.logger import logger
 from app.core import settings
 from app.services import find_faces
-from app.api import Prediction
+from pydantic import BaseModel
 import requests
 import json
+
+
+class Prediction(BaseModel):
+    happy: float
+    sad: float
+    normal: float
+    angry: float
 
 
 @logger.catch

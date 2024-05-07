@@ -25,10 +25,6 @@ class Settings(BaseSettings):
     AWS_S3_ENDPOINT_URL: str = os.environ['AWS_S3_ENDPOINT_URL']
     AWS_DEFAULT_REGION: str = os.environ['AWS_DEFAULT_REGION']
 
-    # Celery
-    CELERY_BROKER_URL: str = "redis://localhost:6479/0"  # redis
-    CELERY_RESULT_BACKEND: str = "redis://localhost:6479/0"  # redis
-
     # MongoDB
     MONGO_HOST: str = 'localhost'  # mongodb
     MONGO_PORT: int = 28017
