@@ -27,17 +27,17 @@ class Settings(BaseSettings):
     AWS_DEFAULT_REGION: str = os.environ['AWS_DEFAULT_REGION']
 
     # MongoDB
-    MONGO_HOST: str = 'mongodb'  # mongodb
+    MONGO_HOST: str = 'localhost'  # mongodb
     MONGO_PORT: int = 28017
     MONGO_USER: str = urllib.parse.quote_plus(os.environ['MONGO_USER'])
     MONGO_PASS: str = urllib.parse.quote_plus(os.environ['MONGO_PASS'])
     MONGO_URL: str = f'mongodb://{MONGO_USER}:{MONGO_PASS}@{MONGO_HOST}:{MONGO_PORT}'
 
     # Tensorflow
-    TF_HOST: str = 'tf-serving'  # tf-serving
-    TF_PORT: int = 8500
+    TF_HOST: str = 'localhost'  # tf-serving
+    TF_PORT: int = 8501
     TF_VERSION: str = 'v1'
-    TF_URL: str = f"http://{TF_HOST}:{TF_PORT}/{TF_VERSION}/models/e-motion_detector:predict"
+    TF_URL: str = f"http://{TF_HOST}:{TF_PORT}/{TF_VERSION}/models/diploma-serving-v2:predict"
 
     # Middleware
     MIDDLEWARE_CORS: bool = True

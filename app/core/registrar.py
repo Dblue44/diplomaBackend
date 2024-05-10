@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from motor.motor_asyncio import AsyncIOMotorClient
 from beanie import init_beanie
 from app.logger import logger
-from app.services import MusicDoc
+from app.services import musics
 from app.core import settings
 from app.api import v1
 from app.utils import ensure_unique_route_names, simplify_operation_ids
@@ -14,7 +14,7 @@ from app.utils import ensure_unique_route_names, simplify_operation_ids
 async def lifespan(application: FastAPI) -> typing.AsyncGenerator[None, None]:
     logger.info("Start connection to MongoDB")
     client = AsyncIOMotorClient(settings.MONGO_URL)
-    await init_beanie(database=client.db_name, document_models=[MusicDoc])
+    await init_beanie(database=client.music, document_models=[musics])
     logger.info("MongoDB was connected successfully")
     yield
 

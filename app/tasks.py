@@ -23,15 +23,15 @@ async def predict_photo(photo: bytes) -> Prediction | str:
     faces = find_faces(photo)
     if faces is None:
         return "Нет лиц на фотографии"
-    data = json.dumps({"signature_name": "serving_default", "instances": faces[0]})
+    data = json.dumps({"signature_name": "serving_default", "instances": faces[0].data.tolist()})
     try:
         json_response = requests.post(settings.TF_URL, data=data, headers={"content-type": "application/json"})
-        logger.info(f"Ответ от TF Serving: {json.loads(json_response.text)}")
+        logger.info(f"Ответ от TF Serving: {json.loads(json_response.text)['predictions'][0]}")
     except requests.exceptions.Timeout:
         logger.error("Timeout запроса к TF Serving")
         return "Ошибка подключения к TF Serving."
-    except requests.exceptions.ConnectionError:
-        logger.error("ConnectionError запроса к TF Serving")
+    except requests.exceptions.ConnectionError as error:
+        logger.error(f"ConnectionError запроса к TF Serving: {error}")
         return "Неправильный запрос к TF Serving"
-    predictions = json.loads(json_response.text)['predictions']
-    return Prediction(happy=1, sad=1, normal=1, angry=1)
+    predictions = json.loads(json_response.text)['predictions'][0]
+    return Prediction(angry=predictions[0], happy=predictions[1], normal=predictions[2], sad=predictions[3])

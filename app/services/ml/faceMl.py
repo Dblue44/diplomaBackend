@@ -12,8 +12,9 @@ class Face(BaseModel):
 
 
 def resize_image(faceImage: ndarray) -> ndarray:
-    resizedImage = cv2.resize(faceImage, (60, 60))
+    resizedImage = cv2.resize(faceImage, (48, 48))
     preprocImage: ndarray = np.array(resizedImage) / 255
+    preprocImage = np.array([preprocImage])
     return preprocImage
 
 

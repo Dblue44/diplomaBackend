@@ -1,1 +1,1 @@
-from .beani import find_music, MusicDoc
+from .beani import find_music, musics, Music

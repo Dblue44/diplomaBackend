@@ -1,6 +1,6 @@
 from typing import List
 from pydantic import BaseModel
-from beanie import Document
+from beanie import Document, PydanticObjectId
 from beanie.operators import And
 
 class Prediction(BaseModel):
@@ -10,21 +10,32 @@ class Prediction(BaseModel):
     angry: float
 
 class Music(BaseModel):
-    id: str
+    id: PydanticObjectId
     artist: str
     trackName: str
     photoId: str
 
 
-class MusicDoc(Document):
-    musicId: str
-    artist: str
-    trackName: str
-    photoId: str
-    happy: float
-    sad: float
-    normal: float
-    angry: float
+class musics(Document):
+    artists: str
+    track_name: str
+    album_name: str
+    popularity: int
+    duration_ms: int
+    explicit: bool
+    danceability: float
+    energy: float
+    key: int
+    loudness: float
+    mode: int
+    speechiness: float
+    acousticness: float
+    instrumentalness: float
+    liveness: float
+    valence: float
+    tempo: float
+    time_signature: int
+    track_genre: str
 
 
 async def find_music(prediction: Prediction) -> List[Music] | None:
@@ -33,17 +44,35 @@ async def find_music(prediction: Prediction) -> List[Music] | None:
     :param prediction:
     :return:
     """
-    musics: list = await MusicDoc.find(_get_filters(prediction)).to_list()
-    return musics
+    filters = _get_filters(prediction)
+    musicData: list = await musics.find(filters).to_list()
+    return [Music(id=el.id, artist=el.artists, trackName=el.track_name, photoId=el.album_name) for el in musicData]
 
 
 def _get_filters(prediction: Prediction) -> And:
-    _happy = And(MusicDoc.happy > (prediction.happy - 0.1),
-                 MusicDoc.happy < (prediction.happy + 0.1))
-    _sad = And(MusicDoc.sad > (prediction.sad - 0.1),
-               MusicDoc.sad < (prediction.sad + 0.1))
-    _normal = And(MusicDoc.normal > (prediction.normal - 0.1),
-                  MusicDoc.normal < (prediction.normal + 0.1))
-    _angry = And(MusicDoc.angry > (prediction.angry - 0.1),
-                 MusicDoc.angry < (prediction.angry + 0.1))
-    return And(_happy, _sad, _normal, _angry)
+    ms = [prediction.happy, prediction.sad, prediction.normal, prediction.angry]
+    max_index = ms.index(max(ms))
+    match max_index:
+        case 0:
+            return And(musics.danceability > 0.8,
+                   musics.valence > 0.8,
+                   musics.tempo > 140,
+                   musics.mode == 1)
+        case 1:
+            return And(musics.danceability < 0.3,
+                   musics.valence > 0.4,
+                   musics.valence < 0.6,
+                   musics.tempo > 100,
+                   musics.mode == 0)
+        case 2:
+            return And(musics.danceability > 0.4,
+                   musics.danceability < 0.6,
+                   musics.valence > 0.4,
+                   musics.valence < 0.5,
+                   musics.tempo < 100,
+                   musics.mode == 0)
+        case 3:
+            return And(musics.danceability < 0.2,
+                   musics.valence < 0.2,
+                   musics.tempo > 140,
+                   musics.mode == 0)
