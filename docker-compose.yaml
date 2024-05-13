@@ -1,8 +1,8 @@
 version: "1.1"
 
 services:
-  server:
-    container_name: diploma_backend
+  backend-server:
+    container_name: backend-server
     image: diploma
     build:
       context: .
@@ -52,7 +52,7 @@ services:
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
     depends_on:
-      - server
+      - backend-server
 
   grafana:
     image: grafana/grafana
@@ -76,7 +76,7 @@ services:
       - ./nginx/conf.d/:/etc/nginx/conf.d/:ro
       - ./nginx/letsencrypts:/etc/letsencrypt
     depends_on:
-      - server
+      - backend-server
 
 volumes:
   etc-letcencrypt:
