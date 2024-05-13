@@ -94,8 +94,6 @@ services:
     volumes:
       - etc-letcencrypt:/etc/letsencrypt
       - ./nginx/certbot/www/:/var/www/certbot/:rw
-    depends_on:
-      - nginx
 
 volumes:
   etc-letcencrypt:
