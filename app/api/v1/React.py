@@ -1,6 +1,9 @@
+import io
 from typing import List, Annotated
 from fastapi import APIRouter, Response, HTTPException, File, status
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
+
 from app.logger import logger
 from app.services import get_photo_from_aws, get_music_from_aws, find_music, Music
 from app.tasks import predict_photo, Prediction
@@ -28,7 +31,12 @@ async def get_photo(fileId: str) -> Response:
 async def get_music(musicId: str) -> Response:
     bytesData = await get_music_from_aws(musicId)
     if bytesData:
-        return Response(content=bytesData, media_type="audio/mpeg")
+        return StreamingResponse(
+            status_code=status.HTTP_200_OK,
+            content=io.BytesIO(bytesData),
+            media_type="application/octet-stream",
+            headers={"Content-Disposition": f"attachment; filename={musicId}"}
+        )
     else:
         raise HTTPException(status_code=status.HTTP_204_NO_CONTENT, detail="Music not found")
 

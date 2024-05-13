@@ -36,6 +36,7 @@ class musics(Document):
     tempo: float
     time_signature: int
     track_genre: str
+    photoId: str
 
 
 async def find_music(prediction: Prediction) -> List[Music] | None:
@@ -46,7 +47,7 @@ async def find_music(prediction: Prediction) -> List[Music] | None:
     """
     filters = _get_filters(prediction)
     musicData: list = await musics.find(filters).to_list()
-    return [Music(id=el.id, artist=el.artists, trackName=el.track_name, photoId=el.album_name) for el in musicData]
+    return [Music(id=music.id, artist=music.artists, trackName=music.track_name, photoId=music.photoId) for music in musicData]
 
 
 def _get_filters(prediction: Prediction) -> And:

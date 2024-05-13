@@ -40,8 +40,8 @@ async def get_music_from_aws(musicId: str) -> bytes | None:
             aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
             aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY
         )
-        photo = s3.get_object(Bucket='diploma', Key=f'admin/music/{musicId}.mp3')
-        return photo['Body'].read()
+        music = s3.get_object(Bucket='diploma', Key=f'admin/music/{musicId}.mp3')
+        return music['Body'].read()
     except ClientError as err:
         logger.error("S3 Error (Music): ", err)
         return None
