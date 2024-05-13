@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     UVICORN_RELOAD: bool = True
 
     # FastAPI
-    API_V1_STR: str = '/api/v1'
+    API_V1_STR: str = '/v1'
     TITLE: str = 'FastAPI'
     VERSION: str = '0.0.1'
     DESCRIPTION: str = 'FastAPITelegramBot'
