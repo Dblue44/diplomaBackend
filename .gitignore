@@ -125,3 +125,5 @@ cython_debug/
 /app/logs/
 /models/
 /nginx/certbot/
+/nginx/letsencrypts/certificate_full_chain.pem
+/nginx/letsencrypts/private_key.pem

@@ -74,26 +74,9 @@ services:
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./nginx/conf.d/:/etc/nginx/conf.d/:ro
-      - ./nginx/certbot/www:/var/www/certbot/:ro
-      - etc-letcencrypt:/etc/letcencrypt
-
-  certbot:
-    image: certbot/certbot:latest
-    container_name: certbot
-    restart: unless-stopped
-    command:
-      - certonly
-      - --webroot
-      - --webroot-path=/var/www/certbot/html
-      - --force-renewal
-      - --email=stakheev12@mail.ru
-      - --agree-tos
-      - --no-eff-email
-      - --staging
-      - -d diploma-susu-24.ru
-    volumes:
-      - etc-letcencrypt:/etc/letsencrypt
-      - ./nginx/certbot/www/:/var/www/certbot/:rw
+      - ./nginx/letsencrypts:/etc/letsencrypts
+    depends_on:
+      - server
 
 volumes:
   etc-letcencrypt:
